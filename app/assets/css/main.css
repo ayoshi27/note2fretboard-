@@ -1,5 +1,6 @@
 body,
 button {
+  user-select: none;
   font-family: "Montserrat", sans-serif;
   touch-action: manipulation;
 }
