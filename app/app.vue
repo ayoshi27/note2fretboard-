@@ -73,11 +73,11 @@ const buttonLabel = computed(() => {
       <fieldset class="target-fret-range">
         <legend>Target Fret</legend>
         <select v-model="selectedTargetFretStart">
-          <option v-for="n in 15" :key="n" :value="n - 1">{{ n - 1 }}</option>
+          <option v-for="n in 25" :key="n" :value="n - 1">{{ n - 1 }}</option>
         </select>
         <span>to</span>
         <select v-model="selectedTargetFretEnd">
-          <option v-for="n in 15" :key="n" :value="n - 1">{{ n - 1 }}</option>
+          <option v-for="n in 25" :key="n" :value="n - 1">{{ n - 1 }}</option>
         </select>
       </fieldset>
     </div>
