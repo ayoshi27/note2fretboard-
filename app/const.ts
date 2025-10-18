@@ -744,7 +744,8 @@ export const SOUND_ON_GUITAR_STRING: Record<GuitarString, Sound[]> = {
   ],
 };
 
-export const getSoundNotation = (sound: Sound) => {
+export const getSoundNotation = (sound: Sound | undefined) => {
+  if (!sound) return "";
   return sound.symbol
     ? `${sound.note}${sound.symbol}${sound.octave}`
     : `${sound.note}${sound.octave}`;

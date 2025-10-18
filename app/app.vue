@@ -8,6 +8,8 @@ import {
 
 type TargetStringOption = GuitarString | "all";
 const selectedTargetGuitarString = ref<TargetStringOption>("all");
+const selectedTargetFretStart = ref<number>(0);
+const selectedTargetFretEnd = ref<number>(12);
 
 const note = ref<Sound["note"]>("");
 const guitarString = ref<GuitarString>(6);
@@ -19,20 +21,33 @@ const startLesson = () => {
       ? ((Math.floor(Math.random() * 6) + 1) as GuitarString)
       : selectedTargetGuitarString.value;
   const notes = SOUND_ON_GUITAR_STRING[guitarString.value];
-  const answerNote = notes[Math.floor(Math.random() * notes.length)] as Sound;
-  note.value = getSoundNotation(answerNote);
 
-  answer.value = notes.findIndex(
-    (n) =>
-      n.note === answerNote.note &&
-      n.octave === answerNote.octave &&
-      n.symbol === answerNote.symbol
+  const minSelected = Math.min(
+    selectedTargetFretStart.value,
+    selectedTargetFretEnd.value
   );
+
+  const maxSelected = Math.max(
+    selectedTargetFretStart.value,
+    selectedTargetFretEnd.value
+  );
+
+  const clampedStart = Math.min(Math.max(minSelected, 0), notes.length - 1);
+  const clampedEnd = Math.min(Math.max(maxSelected, 0), notes.length - 1);
+  const rangeStart = Math.min(clampedStart, clampedEnd);
+  const rangeEnd = Math.max(clampedStart, clampedEnd);
+
+  const fret =
+    Math.floor(Math.random() * (rangeEnd - rangeStart + 1)) + rangeStart;
+
+  const answerNote = notes[fret];
+  note.value = getSoundNotation(answerNote);
+  answer.value = fret;
 };
 
 const questionText = computed(() => {
   if (!note.value) return "Let's get started!";
-  return `Where is ${note.value} on ${guitarString.value} string？`;
+  return `Where is ${note.value} on ${guitarString.value} string?`;
 });
 
 const answerText = computed(() => {
@@ -47,13 +62,24 @@ const buttonLabel = computed(() => {
 
 <template>
   <div class="app-container">
-    <div>
-      <label>
-        Target Guitar String:
+    <div class="settings">
+      <fieldset>
+        <legend>String:</legend>
         <select v-model="selectedTargetGuitarString">
+          <option value="all">All Strings</option>
           <option v-for="n in 6" :key="n" :value="n">{{ n }}</option>
         </select>
-      </label>
+      </fieldset>
+      <fieldset class="target-fret-range">
+        <legend>Target Fret</legend>
+        <select v-model="selectedTargetFretStart">
+          <option v-for="n in 15" :key="n" :value="n - 1">{{ n - 1 }}</option>
+        </select>
+        <span>to</span>
+        <select v-model="selectedTargetFretEnd">
+          <option v-for="n in 15" :key="n" :value="n - 1">{{ n - 1 }}</option>
+        </select>
+      </fieldset>
     </div>
 
     <section class="question-section">
@@ -74,8 +100,14 @@ const buttonLabel = computed(() => {
   flex-direction: column;
 }
 
+.settings {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .question-section {
-  height: calc(100% - 100px);
+  height: calc(100% - 250px);
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -83,22 +115,27 @@ const buttonLabel = computed(() => {
   align-items: center;
 }
 
+.target-fret-range {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .question-text {
-  font-size: 36px;
+  font-size: 26px;
   font-weight: bold;
 }
 
 .start-button {
   font-size: 24px;
-  padding: 8px 16px;
+  padding: 12px 24px;
   border-radius: 8px;
   cursor: pointer;
 }
 
 select {
-  width: 60px;
+  width: 135px;
   font-size: 16px;
-  margin-left: 8px;
   padding: 4px 8px;
 }
 </style>
