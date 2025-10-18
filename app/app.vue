@@ -11,16 +11,16 @@ const selectedTargetGuitarString = ref<TargetStringOption>("all");
 const selectedTargetFretStart = ref<number>(0);
 const selectedTargetFretEnd = ref<number>(12);
 
-const note = ref<Sound["note"]>("");
-const guitarString = ref<GuitarString>(6);
+const questionNote = ref<Sound["note"]>("");
+const questionGuitarString = ref<GuitarString>(6);
 const answer = ref<number | null>(null);
 
 const startLesson = () => {
-  guitarString.value =
+  questionGuitarString.value =
     selectedTargetGuitarString.value === "all"
       ? ((Math.floor(Math.random() * 6) + 1) as GuitarString)
       : selectedTargetGuitarString.value;
-  const notes = SOUND_ON_GUITAR_STRING[guitarString.value];
+  const notes = SOUND_ON_GUITAR_STRING[questionGuitarString.value];
 
   const minSelected = Math.min(
     selectedTargetFretStart.value,
@@ -41,13 +41,13 @@ const startLesson = () => {
     Math.floor(Math.random() * (rangeEnd - rangeStart + 1)) + rangeStart;
 
   const answerNote = notes[fret];
-  note.value = getSoundNotation(answerNote);
+  questionNote.value = getSoundNotation(answerNote);
   answer.value = fret;
 };
 
 const questionText = computed(() => {
-  if (!note.value) return "Let's get started!";
-  return `Where is ${note.value} on ${guitarString.value} string?`;
+  if (!questionNote.value) return "Let's get started!";
+  return `Where is ${questionNote.value} on ${questionGuitarString.value} string?`;
 });
 
 const answerText = computed(() => {
@@ -56,7 +56,7 @@ const answerText = computed(() => {
 });
 
 const buttonLabel = computed(() => {
-  return note.value ? "Next" : "Start";
+  return questionNote.value ? "Next" : "Start";
 });
 </script>
 
